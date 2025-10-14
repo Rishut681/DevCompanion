@@ -1,0 +1,23 @@
+{
+  "name": "devcompanion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:start-client\" \"npm:start-server\"",
+    "start-client": "npm --workspace=client run dev",
+    "start-server": "npm --workspace=server run dev",
+    "lint": "npm --workspace=client run lint || true"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
