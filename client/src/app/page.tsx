@@ -1,103 +1,104 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+// --- NEXT.JS STANDARD IMPORTS ---
+// Assuming you have 'framer-motion' installed: npm install framer-motion
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion'; 
+// FIX: Changing to simple relative paths, assuming the compiler treats them as siblings 
+// due to the nature of the development environment.
+import Dashboard from '../components/Dashboard';
+import LoadingScreen from '../components/LoadingScreen';
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+// --- TIMING CONSTANTS ---
+const MIN_LOAD_TIME = 3000; // Minimum time (2 seconds)
+const MAX_LOAD_TIME = 5000; // Maximum time (3 seconds)
+
+// In a real Next.js app, external libraries like Three.js are typically imported
+// into the components that need them (Dashboard or LoadingScreen), not loaded 
+// via script tags here. Since Framer Motion is the only global one needed for the transition,
+// we only manage its imports directly.
+
+const HomePage = () => {
+    // State for the main components and loading progress
+    const [isLoading, setIsLoading] = useState(true);
+    const [progress, setProgress] = useState(0);
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+    
+    const startTime = useRef(Date.now());
+    
+    // 1. Simulate Asset Loading and Progress Bar
+    useEffect(() => {
+        // Set up the progress bar interval
+        const progressInterval = setInterval(() => {
+            setProgress(prev => {
+                if (prev < 95) {
+                    // Update progress based on elapsed time for smooth progression
+                    const elapsedTime = Date.now() - startTime.current;
+                    const newProgress = (elapsedTime / MAX_LOAD_TIME) * 95;
+                    return Math.min(newProgress, 95);
+                }
+                return prev;
+            });
+        }, 50);
+
+        // Simulate initial asset/data fetching time (e.g., initial API calls)
+        // For demonstration, we use a simple timeout, but in a real app, this would be 
+        // a Promise.all() waiting for your actual data fetching to resolve.
+        const simulatedAssetLoad = setTimeout(() => {
+            setInitialLoadComplete(true);
+        }, 1000); // Assume real assets take 1 second to load
+
+        // Safety net: Force completion after MAX_LOAD_TIME
+        const maxLoadTimeout = setTimeout(() => {
+            setInitialLoadComplete(true);
+        }, MAX_LOAD_TIME);
+
+        return () => {
+            clearInterval(progressInterval);
+            clearTimeout(simulatedAssetLoad);
+            clearTimeout(maxLoadTimeout);
+        };
+    }, []); 
+
+    // 2. Final Transition Effect (Enforces Min Load Time)
+    useEffect(() => {
+        if (initialLoadComplete) {
+            const elapsed = Date.now() - startTime.current;
+            // Calculate how much time is left before the MIN_LOAD_TIME is reached
+            const remainingTime = Math.max(0, MIN_LOAD_TIME - elapsed);
+            
+            // Wait for the remaining time, then transition out of the loading screen
+            const transitionTimeout = setTimeout(() => {
+                setProgress(100);
+                setIsLoading(false);
+            }, remainingTime);
+
+            return () => clearTimeout(transitionTimeout);
+        }
+    }, [initialLoadComplete]);
+
+
+    return (
+        <AnimatePresence mode="wait">
+            {isLoading && (
+                // Displays the award-winning loading screen
+                // progress is now the only required prop
+                <LoadingScreen key="loading" progress={progress} />
+            )}
+            {!isLoading && (
+                // Fades in the dashboard after loading is complete
+                <motion.div 
+                    key="dashboard" 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    transition={{ duration: 0.8 }} 
+                    className="h-full w-full"
+                >
+                    <Dashboard />
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
+export default HomePage;
