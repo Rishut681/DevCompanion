@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUser, useClerk, UserButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from "next/image";
 import styled, { keyframes, createGlobalStyle } from 'styled-components';
 import { 
   Sparkles, 
@@ -611,7 +612,7 @@ const ModelDashboard = () => {
             >
               <UserAvatar>
                 {userImage ? (
-                  <img src={userImage} alt={userName} />
+                  <Image src={userImage} alt={userName} />
                 ) : (
                   <UserIcon size={18} />
                 )}
