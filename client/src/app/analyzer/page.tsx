@@ -589,7 +589,7 @@ const AnalyzerPage = () => {
     setResults(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/analyze', {
+      const response = await fetch('https://devcompanion.onrender.com/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
