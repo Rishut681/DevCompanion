@@ -1005,7 +1005,7 @@ const AnalyzerPage = () => {
               </EmptyStateIcon>
               <EmptyStateText>Ready to Analyze Your Code</EmptyStateText>
               <EmptyStateSubtext>
-                Paste your code above and click "Analyze Code" to get AI-powered insights
+                Paste your code above and click &quot;"Analyze Code"&quot; to get AI-powered insights
               </EmptyStateSubtext>
             </EmptyState>
           </Card>
